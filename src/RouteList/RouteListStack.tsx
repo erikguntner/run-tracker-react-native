@@ -16,7 +16,13 @@ const RouteListStack = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="Route" component={RouteScreen} />
+      <Stack.Screen
+        name="Route"
+        component={RouteScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

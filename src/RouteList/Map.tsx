@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 });
 
 const Map = ({ routes }: MapProps) => {
-  const mapRef = useRef(null);
+  const mapRef = useRef<MapView | null>(null);
   const [index, setIndex] = useState<number>(0);
   const { scrollHandler, x } = useScrollHandler();
 
@@ -60,7 +60,7 @@ const Map = ({ routes }: MapProps) => {
     setIndex(currIndex);
   };
 
-  const { centerPoint, coordinates } = useMemo(() => {
+  const { coordinates } = useMemo(() => {
     const { lines } = routes[index];
     const line = multiLineString(lines);
     var boundingBox = bbox(line);
@@ -88,15 +88,12 @@ const Map = ({ routes }: MapProps) => {
     };
   }, [index, routes]);
 
-  const longitude = centerPoint.geometry.coordinates[0];
-  const latitude = centerPoint.geometry.coordinates[1];
-
   return (
     <View style={styles.container}>
       <MapView ref={mapRef} style={styles.map}>
         <Polyline
           {...{ coordinates }}
-          strokeColor="#238C23" // fallback for when `strokeColors` is not supported by the map-provider
+          strokeColor="#0070f3" // fallback for when `strokeColors` is not supported by the map-provider
           strokeWidth={3}
         />
       </MapView>

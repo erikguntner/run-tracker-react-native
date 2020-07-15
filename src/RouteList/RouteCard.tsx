@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     height: 150,
     marginRight: SPACING,
+    borderRadius: 5,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
