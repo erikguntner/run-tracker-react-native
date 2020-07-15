@@ -1,9 +1,8 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   View,
   StyleSheet,
   Dimensions,
-  ScrollView,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
@@ -11,10 +10,10 @@ import Animated from 'react-native-reanimated';
 import MapView, { Polyline } from 'react-native-maps';
 import { Route } from './routeListSlice';
 import bbox from '@turf/bbox';
-import center from '@turf/center';
 import { multiLineString } from '@turf/helpers';
 import { useScrollHandler } from 'react-native-redash';
 import RouteCard from './RouteCard';
+import { useFitToCoordinates } from './useFitToCoordinates';
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,39 +53,18 @@ const Map = ({ routes }: MapProps) => {
   const [index, setIndex] = useState<number>(0);
   const { scrollHandler, x } = useScrollHandler();
 
-  const getInterval = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const getIndex = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offset = e.nativeEvent.contentOffset.x;
     const currIndex = offset / (width - OFFSET_WIDTH);
     setIndex(currIndex);
   };
 
-  const { coordinates } = useMemo(() => {
-    const { lines } = routes[index];
-    const line = multiLineString(lines);
-    var boundingBox = bbox(line);
-    const coordinates = lines
-      .reduce((accum, curr) => accum.concat(curr), [])
-      .map((route) => ({ latitude: route[1], longitude: route[0] }));
-
-    if (mapRef.current) {
-      mapRef.current.fitToCoordinates(
-        [
-          { latitude: boundingBox[1], longitude: boundingBox[0] },
-          { latitude: boundingBox[3], longitude: boundingBox[2] },
-        ],
-        {
-          edgePadding: { top: 50, right: 50, bottom: 250, left: 50 },
-          animated: false,
-        },
-      );
-    }
-
-    return {
-      boundingBox: bbox(line),
-      centerPoint: center(line),
-      coordinates,
-    };
-  }, [index, routes]);
+  const { coordinates } = useFitToCoordinates(mapRef, routes[index], {
+    top: 50,
+    right: 50,
+    bottom: 250,
+    left: 50,
+  });
 
   return (
     <View style={styles.container}>
@@ -103,7 +81,7 @@ const Map = ({ routes }: MapProps) => {
         snapToInterval={width - OFFSET_WIDTH}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={getInterval}
+        onMomentumScrollEnd={getIndex}
         bounces={false}
         {...scrollHandler}>
         {routes.map((route, idx) => (

@@ -10,6 +10,7 @@ import { useScrollHandler } from 'react-native-redash';
 import { RootState } from '../redux/rootReducer';
 import { RouteListStackNavProps } from './RouteListParamList';
 import { BorderlessButton } from 'react-native-gesture-handler';
+import { useFitToCoordinates } from './useFitToCoordinates';
 
 const { width, height } = Dimensions.get('window');
 
@@ -76,39 +77,12 @@ const RouteScreen = ({
     extrapolate: Extrapolate.CLAMP,
   });
 
-  useEffect(() => {
-    if (mapRef.current) {
-      const { lines } = data;
-      const line = multiLineString(lines);
-      var boundingBox = bbox(line);
-      mapRef.current.fitToCoordinates(
-        [
-          { latitude: boundingBox[1], longitude: boundingBox[0] },
-          { latitude: boundingBox[3], longitude: boundingBox[2] },
-        ],
-        {
-          edgePadding: {
-            top: HEADER_HEIGHT,
-            right: 50,
-            bottom: 50 + BORDER_RADIUS,
-            left: 50,
-          },
-          animated: false,
-        },
-      );
-    }
-  }, []);
-
-  const { coordinates } = useMemo(() => {
-    const { lines } = data;
-    const coordinates = lines
-      .reduce((accum, curr) => accum.concat(curr), [])
-      .map((route) => ({ latitude: route[1], longitude: route[0] }));
-
-    return {
-      coordinates,
-    };
-  }, [data]);
+  const { coordinates } = useFitToCoordinates(mapRef, data, {
+    top: HEADER_HEIGHT,
+    right: 50,
+    bottom: 50 + BORDER_RADIUS,
+    left: 50,
+  });
 
   return (
     <View style={styles.container}>
