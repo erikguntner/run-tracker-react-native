@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Dimensions } from 'react-native';
-import MapView from 'react-native-maps';
 import Animated, {
   cond,
   eq,
@@ -27,8 +26,8 @@ import {
   TapGestureHandler,
   State,
 } from 'react-native-gesture-handler';
-
-interface RouteListScreenProps {}
+import { RouteListStackNavProps } from './RouteListParamList';
+import Map from './Map';
 
 const { width, height } = Dimensions.get('window');
 
@@ -58,17 +57,6 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     width,
   },
-  mapContainer: {
-    ...StyleSheet.absoluteFillObject,
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    backgroundColor: 'red',
-  },
-  map: {
-    flex: 1,
-    width: '100%',
-  },
   route: {
     padding: 20,
   },
@@ -81,7 +69,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const RouteListScreen = ({}: RouteListScreenProps) => {
+const RouteListScreen = ({
+  navigation,
+}: RouteListStackNavProps<'RouteList'>) => {
   const [open, state] = useValues(0, State.UNDETERMINED);
   const transition = withTransition(open, { duration: 300 });
   const gestureHandler = useGestureHandler({ state });
@@ -135,24 +125,18 @@ const RouteListScreen = ({}: RouteListScreenProps) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.mapContainer}>
-        <MapView
-          style={styles.map}
-          region={{
-            latitude: 37.78825,
-            longitude: -122.4324,
-            latitudeDelta: 0.015,
-            longitudeDelta: 0.0121,
-          }}
-        />
-      </View>
+      <Map {...{ routes }} />
       <Animated.View
         style={[styles.listContainer, { transform: [{ translateY }] }]}>
         <FlatList
           style={styles.list}
-          renderItem={({ item: { name } }) => {
+          renderItem={({ item: { name, id } }) => {
             return (
-              <RectButton style={styles.route}>
+              <RectButton
+                onPress={() => {
+                  navigation.navigate('Route', { id });
+                }}
+                style={styles.route}>
                 <Text>{name}</Text>
               </RectButton>
             );
