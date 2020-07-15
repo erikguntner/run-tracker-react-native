@@ -24,7 +24,6 @@ const Routes: React.FC<RoutesProps> = ({}) => {
   useEffect(() => {
     const getUser = async () => {
       const tokenString = await AsyncStorage.getItem('@token');
-      console.log(tokenString);
       if (tokenString !== null) {
         dispatch(
           fetchUser({
@@ -36,8 +35,6 @@ const Routes: React.FC<RoutesProps> = ({}) => {
 
     getUser();
   }, []);
-
-  console.log(user);
 
   return (
     <NavigationContainer>

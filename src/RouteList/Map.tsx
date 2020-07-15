@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,18 +7,27 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import MapView, { Polyline } from 'react-native-maps';
 import { Route } from './routeListSlice';
-import { Text } from 'react-native-svg';
 import bbox from '@turf/bbox';
 import center from '@turf/center';
 import { multiLineString } from '@turf/helpers';
+import { useScrollHandler } from 'react-native-redash';
+import RouteCard from './RouteCard';
 
 const { width, height } = Dimensions.get('window');
 
 interface MapProps {
   routes: Route[];
 }
+
+export const WIDTH = width;
+export const SPACING = 24;
+export const PADDING_LEFT = SPACING * 2;
+export const END_MARGIN = SPACING * 4;
+export const OFFSET_WIDTH = SPACING * 3;
+export const CARD_WIDTH = WIDTH - END_MARGIN;
 
 const styles = StyleSheet.create({
   container: {
@@ -33,46 +42,44 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     ...StyleSheet.absoluteFillObject,
-    top: height - 300,
-    height: 200,
-    backgroundColor: 'red',
-  },
-  card: {
-    width: width - 40,
-    height: 200,
-    marginHorizontal: 20,
-    backgroundColor: 'blue',
+    top: height - 190 - 80,
+    height: 150 + 40,
+    paddingVertical: 20,
+    paddingLeft: PADDING_LEFT,
   },
 });
 
 const Map = ({ routes }: MapProps) => {
+  const mapRef = useRef(null);
   const [index, setIndex] = useState<number>(0);
+  const { scrollHandler, x } = useScrollHandler();
 
   const getInterval = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offset = e.nativeEvent.contentOffset.x;
-    const currIndex = offset / width;
-    const { lines } = routes[index];
-    var line = multiLineString(lines);
-    var boundingBox = bbox(line);
-    // mapRef.fitToCoordinates(
-    //   [
-    //     { latitude: boundingBox[1], longitude: boundingBox[0] },
-    //     { latitude: boundingBox[3], longitude: boundingBox[2] },
-    //   ],
-    //   {
-    //     edgePadding: { top: 100, right: 100, bottom: 100, left: 100 },
-    //     animated: true,
-    //   },
-    // );
+    const currIndex = offset / (width - OFFSET_WIDTH);
     setIndex(currIndex);
   };
 
   const { centerPoint, coordinates } = useMemo(() => {
     const { lines } = routes[index];
     const line = multiLineString(lines);
+    var boundingBox = bbox(line);
     const coordinates = lines
       .reduce((accum, curr) => accum.concat(curr), [])
       .map((route) => ({ latitude: route[1], longitude: route[0] }));
+
+    if (mapRef.current) {
+      mapRef.current.fitToCoordinates(
+        [
+          { latitude: boundingBox[1], longitude: boundingBox[0] },
+          { latitude: boundingBox[3], longitude: boundingBox[2] },
+        ],
+        {
+          edgePadding: { top: 50, right: 50, bottom: 250, left: 50 },
+          animated: false,
+        },
+      );
+    }
 
     return {
       boundingBox: bbox(line),
@@ -81,39 +88,31 @@ const Map = ({ routes }: MapProps) => {
     };
   }, [index, routes]);
 
-  const longitude: number = centerPoint.geometry.coordinates[0];
-  const latitude: number = centerPoint.geometry.coordinates[1];
+  const longitude = centerPoint.geometry.coordinates[0];
+  const latitude = centerPoint.geometry.coordinates[1];
 
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={{
-          latitude,
-          longitude,
-          latitudeDelta: 0.015,
-          longitudeDelta: 0.0121,
-        }}>
+      <MapView ref={mapRef} style={styles.map}>
         <Polyline
           {...{ coordinates }}
           strokeColor="#238C23" // fallback for when `strokeColors` is not supported by the map-provider
           strokeWidth={3}
         />
       </MapView>
-      <ScrollView
+      <Animated.ScrollView
         style={styles.scrollview}
         horizontal
-        snapToInterval={width}
+        snapToInterval={width - OFFSET_WIDTH}
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={getInterval}
-        bounces={false}>
-        {routes.map((route) => (
-          <View style={styles.card}>
-            <Text>{route.name}</Text>
-          </View>
+        bounces={false}
+        {...scrollHandler}>
+        {routes.map((route, idx) => (
+          <RouteCard key={idx} index={idx} {...{ route, x }} />
         ))}
-      </ScrollView>
+      </Animated.ScrollView>
     </View>
   );
 };
