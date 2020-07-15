@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   NavigationContainer,
   RouteProp,
@@ -24,6 +24,7 @@ const Routes: React.FC<RoutesProps> = ({}) => {
   useEffect(() => {
     const getUser = async () => {
       const tokenString = await AsyncStorage.getItem('@token');
+      console.log(tokenString);
       if (tokenString !== null) {
         dispatch(
           fetchUser({
@@ -35,6 +36,8 @@ const Routes: React.FC<RoutesProps> = ({}) => {
 
     getUser();
   }, []);
+
+  console.log(user);
 
   return (
     <NavigationContainer>

@@ -1,4 +1,6 @@
-export const routes = [
+import { Route } from '../RouteList/routeListSlice';
+
+export const routes: Route[] = [
   {
     id: 53,
     user_id: 'CpAq9BwftlMHCLdLngZZDPEghyM2',
@@ -295,7 +297,6 @@ export const routes = [
         [-117.728921, 34.106914, 379.44],
         [-117.728882, 34.107005, 379.69],
         [-117.728749, 34.107005, 381.57],
-        ,
       ],
       [
         [-117.728749, 34.107005, 381.57],
@@ -321,7 +322,6 @@ export const routes = [
         [-117.718438, 34.106433, 390.11],
         [-117.717495, 34.106439, 390.32],
         [-117.717497, 34.10678, 391.71],
-        ,
       ],
     ],
     points: [

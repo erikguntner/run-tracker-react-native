@@ -46,7 +46,7 @@ export const fetchUser = ({ token }: { token: string }): AppThunk => async (
   dispatch,
 ) => {
   try {
-    const res = await fetch('http://localhost:3000/api/user', {
+    const res = await fetch('https://rtnt.now.sh/api/user', {
       headers: {
         Accept: 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
