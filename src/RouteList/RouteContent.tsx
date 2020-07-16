@@ -6,8 +6,12 @@ import {
   MAP_HEIGHT,
   HEADER_HEIGHT,
 } from './RouteScreen';
+import { Route } from './routeListSlice';
+import ElevationChart from './ElevationChart';
 
-interface RouteContentProps {}
+interface RouteContentProps {
+  route: Route;
+}
 
 const styles = StyleSheet.create({
   cover: {
@@ -18,16 +22,26 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS,
     borderTopRightRadius: BORDER_RADIUS,
     backgroundColor: '#2d3748',
+    padding: 20,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
 
-const RouteContent = ({}: RouteContentProps) => {
+const RouteContent = ({ route }: RouteContentProps) => {
+  const { name, distance, lines, created_at, city, state } = route;
+
   return (
-    <View style={styles.cover}>
+    <>
+      <View style={styles.cover} />
       <View style={styles.content}>
-        <Text>this is the scroll view</Text>
+        <Text style={styles.title}>{name.toUpperCase()}</Text>
+        <ElevationChart {...{ lines }} />
       </View>
-    </View>
+    </>
   );
 };
 

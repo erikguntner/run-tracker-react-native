@@ -16,7 +16,7 @@ const { width, height } = Dimensions.get('window');
 export const HEIGHT = height;
 export const MAP_HEIGHT = 0.61 * height;
 export const HEADER_HEIGHT = 84;
-export const BORDER_RADIUS = 55;
+export const BORDER_RADIUS = 35;
 
 const styles = StyleSheet.create({
   container: {
@@ -102,7 +102,7 @@ const RouteScreen = ({
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         {...scrollHandler}>
-        <RouteContent />
+        <RouteContent route={data} />
       </Animated.ScrollView>
       <View style={styles.header}>
         <View style={styles.bar}>

@@ -5,7 +5,7 @@ import { AppThunk } from './store';
 interface User {
   username: string;
   email: string;
-  unist: 'miles' | 'kilometers';
+  units: 'miles' | 'kilometers';
 }
 
 interface InitialState {
