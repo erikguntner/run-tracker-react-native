@@ -3,14 +3,14 @@ import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { parseElevationData } from '../utils/parseElevationData';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { scaleLinear, max, extent, curveMonotoneX, line } from 'd3';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/rootReducer';
 import { convertLength } from '@turf/helpers';
 
 import Cursor from './Cursor';
 
 interface ElevationChartProps {
   lines: number[][][];
+  units: 'kilometers' | 'miles';
+  setPointAlongPath: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 interface DataPoint {
@@ -18,13 +18,15 @@ interface DataPoint {
   distance: number;
 }
 
-const ElevationChart = ({ lines }: ElevationChartProps) => {
-  const { units } = useSelector((state: RootState) => ({
-    units: state.auth.user.units,
-  }));
-
+const ElevationChart = ({
+  lines,
+  units,
+  setPointAlongPath,
+}: ElevationChartProps) => {
   const { width } = Dimensions.get('window');
   const height = 200;
+  const graphPadding = 40;
+  const graphWidth = width - graphPadding;
   const strokeWidth = 4;
   const padding = strokeWidth / 2;
   const CURSOR_RADIUS = 8;
@@ -43,7 +45,7 @@ const ElevationChart = ({ lines }: ElevationChartProps) => {
 
   const xScale = scaleLinear()
     .domain([0, max(elevationData, xValue)])
-    .range([0, width - 40]);
+    .range([0, graphWidth]);
 
   const yScale = scaleLinear()
     .domain(extent(elevationData, yValue))
@@ -56,8 +58,7 @@ const ElevationChart = ({ lines }: ElevationChartProps) => {
 
   return (
     <View>
-      <Text>ElevationChart</Text>
-      <View style={{ width: '100%', height, backgroundColor: '' }}>
+      <View style={{ width: '100%', height }}>
         <Svg style={StyleSheet.absoluteFill}>
           <Defs>
             <LinearGradient id="gradient" x1="50%" y1="0%" x2="50%" y2="100%">
@@ -67,7 +68,7 @@ const ElevationChart = ({ lines }: ElevationChartProps) => {
             </LinearGradient>
           </Defs>
           <Path
-            d={`${d}L ${width} ${height} L 0 ${height}`}
+            d={`${d}L ${graphWidth} ${height} L 0 ${height}`}
             fill="url(#gradient)"
           />
           <Path fill="transparent" stroke="#0070f3" {...{ d, strokeWidth }} />
@@ -76,7 +77,8 @@ const ElevationChart = ({ lines }: ElevationChartProps) => {
           r={CURSOR_RADIUS}
           borderWidth={STROKE_WIDTH}
           borderColor="#3977e3"
-          {...{ d }}
+          width={graphWidth}
+          {...{ d, xScale, lines, units, setPointAlongPath }}
         />
       </View>
     </View>

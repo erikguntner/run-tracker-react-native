@@ -1,5 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { convertLength } from '@turf/helpers';
+
 import {
   HEIGHT,
   BORDER_RADIUS,
@@ -7,10 +10,12 @@ import {
   HEADER_HEIGHT,
 } from './RouteScreen';
 import { Route } from './routeListSlice';
+import { RootState } from '../redux/rootReducer';
 import ElevationChart from './ElevationChart';
 
 interface RouteContentProps {
   route: Route;
+  setPointAlongPath: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 const styles = StyleSheet.create({
@@ -31,15 +36,22 @@ const styles = StyleSheet.create({
   },
 });
 
-const RouteContent = ({ route }: RouteContentProps) => {
+const RouteContent = ({ route, setPointAlongPath }: RouteContentProps) => {
+  const { units } = useSelector((state: RootState) => ({
+    units: state.auth.user.units,
+  }));
+
   const { name, distance, lines, created_at, city, state } = route;
+
+  const convertedLength = convertLength(parseInt(distance), 'meters', units);
+  console.log(convertedLength);
 
   return (
     <>
       <View style={styles.cover} />
       <View style={styles.content}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
-        <ElevationChart {...{ lines }} />
+        <ElevationChart {...{ lines, units, setPointAlongPath }} />
       </View>
     </>
   );

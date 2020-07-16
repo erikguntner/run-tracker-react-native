@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
-import MapView, { Polyline } from 'react-native-maps';
+import MapView, { Polyline, Circle } from 'react-native-maps';
 import Animated, { interpolate, Extrapolate } from 'react-native-reanimated';
 import { useScrollHandler } from 'react-native-redash';
 
@@ -51,6 +51,8 @@ const RouteScreen = ({
   navigation,
 }: RouteListStackNavProps<'Route'>) => {
   const mapRef = useRef<MapView | null>(null);
+  const [pointAlongPath, setPointAlongPath] = useState<number[]>([]);
+
   const { data } = useSelector(({ routeList }: RootState) => ({
     data: routeList.routes.find(({ id }) => id === route.params.id),
   }));
@@ -93,6 +95,16 @@ const RouteScreen = ({
             strokeColor="#0070f3" // fallback for when `strokeColors` is not supported by the map-provider
             strokeWidth={3}
           />
+          {pointAlongPath.length === 2 && (
+            <Circle
+              center={{
+                latitude: pointAlongPath[1],
+                longitude: pointAlongPath[0],
+              }}
+              radius={8}
+              fillColor="blue"
+            />
+          )}
         </MapView>
       </Animated.View>
       <Animated.ScrollView
@@ -102,7 +114,7 @@ const RouteScreen = ({
         decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         {...scrollHandler}>
-        <RouteContent route={data} />
+        <RouteContent route={data} {...{ setPointAlongPath }} />
       </Animated.ScrollView>
       <View style={styles.header}>
         <View style={styles.bar}>
