@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -9,8 +9,6 @@ import {
 import Animated from 'react-native-reanimated';
 import MapView, { Polyline } from 'react-native-maps';
 import { Route } from './routeListSlice';
-import bbox from '@turf/bbox';
-import { multiLineString } from '@turf/helpers';
 import { useScrollHandler } from 'react-native-redash';
 import RouteCard from './RouteCard';
 import { useFitToCoordinates } from './useFitToCoordinates';

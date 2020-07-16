@@ -1,12 +1,11 @@
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import MapView, { Polyline } from 'react-native-maps';
-import bbox from '@turf/bbox';
-import { multiLineString } from '@turf/helpers';
 import Animated, { interpolate, Extrapolate } from 'react-native-reanimated';
 import { useScrollHandler } from 'react-native-redash';
 
+import RouteContent from './RouteContent';
 import { RootState } from '../redux/rootReducer';
 import { RouteListStackNavProps } from './RouteListParamList';
 import { BorderlessButton } from 'react-native-gesture-handler';
@@ -14,9 +13,10 @@ import { useFitToCoordinates } from './useFitToCoordinates';
 
 const { width, height } = Dimensions.get('window');
 
-const MAP_HEIGHT = 0.61 * height;
-const HEADER_HEIGHT = 84;
-const BORDER_RADIUS = 55;
+export const HEIGHT = height;
+export const MAP_HEIGHT = 0.61 * height;
+export const HEADER_HEIGHT = 84;
+export const BORDER_RADIUS = 55;
 
 const styles = StyleSheet.create({
   container: {
@@ -43,15 +43,6 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     flex: 1,
-  },
-  cover: {
-    height: MAP_HEIGHT - BORDER_RADIUS,
-  },
-  content: {
-    height: 800,
-    borderTopLeftRadius: BORDER_RADIUS,
-    borderTopRightRadius: BORDER_RADIUS,
-    backgroundColor: '#2d3748',
   },
 });
 
@@ -106,18 +97,16 @@ const RouteScreen = ({
       </Animated.View>
       <Animated.ScrollView
         style={styles.scrollview}
+        snapToOffsets={[200]}
+        bounces={false}
+        decelerationRate="fast"
         showsVerticalScrollIndicator={false}
         {...scrollHandler}>
-        <View style={styles.cover} />
-        <View style={styles.content}>
-          <Text>this is the scroll view</Text>
-        </View>
+        <RouteContent />
       </Animated.ScrollView>
       <View style={styles.header}>
         <View style={styles.bar}>
-          <BorderlessButton
-            onPress={() => navigation.goBack()}
-            style={styles.backButton}>
+          <BorderlessButton onPress={() => navigation.goBack()}>
             <Text>Back</Text>
           </BorderlessButton>
         </View>
