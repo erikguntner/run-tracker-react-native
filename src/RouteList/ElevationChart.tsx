@@ -18,15 +18,23 @@ interface DataPoint {
   distance: number;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
+
 const ElevationChart = ({
   lines,
   units,
   setPointAlongPath,
 }: ElevationChartProps) => {
   const { width } = Dimensions.get('window');
-  const height = 200;
+  const height = 125;
   const graphPadding = 40;
-  const graphWidth = width - graphPadding;
+  const graphWidth = width - graphPadding - 20;
   const strokeWidth = 4;
   const padding = strokeWidth / 2;
   const CURSOR_RADIUS = 8;
@@ -58,8 +66,8 @@ const ElevationChart = ({
 
   return (
     <View>
-      <View style={{ width: '100%', height }}>
-        <Svg style={StyleSheet.absoluteFill}>
+      <View style={[styles.container, { width: graphWidth, height }]}>
+        <Svg style={{ marginLeft: 20 }}>
           <Defs>
             <LinearGradient id="gradient" x1="50%" y1="0%" x2="50%" y2="100%">
               <Stop offset="0%" stopColor="#cee3f9" />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { convertLength } from '@turf/helpers';
@@ -12,10 +12,15 @@ import {
 import { Route } from './routeListSlice';
 import { RootState } from '../redux/rootReducer';
 import ElevationChart from './ElevationChart';
+import Animated from 'react-native-reanimated';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface RouteContentProps {
   route: Route;
   setPointAlongPath: React.Dispatch<React.SetStateAction<number[]>>;
+  translateY: Animated.Node<number>;
+  isUp: Animated.Node<number>;
+  canScroll: boolean;
 }
 
 const styles = StyleSheet.create({
@@ -33,26 +38,38 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 20,
   },
 });
 
-const RouteContent = ({ route, setPointAlongPath }: RouteContentProps) => {
+const RouteContent = ({
+  route,
+  setPointAlongPath,
+  translateY,
+  isUp,
+  canScroll,
+}: RouteContentProps) => {
   const { units } = useSelector((state: RootState) => ({
     units: state.auth.user.units,
   }));
 
+  const ref = useRef<Animated.View>(null);
+
   const { name, distance, lines, created_at, city, state } = route;
 
   const convertedLength = convertLength(parseInt(distance), 'meters', units);
-  console.log(convertedLength);
 
   return (
     <>
-      <View style={styles.cover} />
-      <View style={styles.content}>
-        <Text style={styles.title}>{name.toUpperCase()}</Text>
-        <ElevationChart {...{ lines, units, setPointAlongPath }} />
-      </View>
+      {/* <View style={styles.cover} /> */}
+      <Animated.View
+        ref={ref}
+        style={[styles.content, { transform: [{ translateY }] }]}>
+        <Animated.ScrollView scrollEnabled={canScroll}>
+          <Text style={styles.title}>{name.toUpperCase()}</Text>
+          <ElevationChart {...{ lines, units, setPointAlongPath }} />
+        </Animated.ScrollView>
+      </Animated.View>
     </>
   );
 };

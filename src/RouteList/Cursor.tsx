@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { multiLineString, lineString } from '@turf/helpers';
 import along from '@turf/along';
 import Animated, {
@@ -7,8 +7,11 @@ import Animated, {
   onChange,
   call,
   sub,
+  eq,
+  concat,
   interpolate,
   Extrapolate,
+  add,
 } from 'react-native-reanimated';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import {
@@ -16,11 +19,10 @@ import {
   getPointAtLength,
   useValues,
   onGestureEvent,
+  ReText,
 } from 'react-native-redash';
 import { ScaleLinear } from 'd3';
 
-const TOUCH_SIZE = 100;
-// const { width } = Dimensions.get('window');
 const white = 'white';
 
 interface CursorProps {
@@ -39,6 +41,15 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     flex: 1,
+  },
+  line: {
+    ...StyleSheet.absoluteFillObject,
+    width: 2,
+    height: 125,
+  },
+  label: {
+    padding: 8,
+    textAlign: 'center',
   },
 });
 
@@ -63,9 +74,20 @@ export default ({
     outputRange: [0, path.totalLength],
     extrapolate: Extrapolate.CLAMP,
   });
+  const opacity = eq(state, State.ACTIVE);
+
   const { y, x } = getPointAtLength(path, length);
-  const translateX: any = sub(x, radius);
+  const translateX: any = x;
   const translateY: any = sub(y, radius);
+
+  const value = interpolate(translateX, {
+    inputRange: [0, width],
+    outputRange: [0, 6.4],
+  });
+
+  const format = (value: Animated.Node<number>) => {
+    return concat('', value);
+  };
 
   useCode(
     () =>
@@ -86,6 +108,16 @@ export default ({
     <PanGestureHandler minDist={0} {...gestureHandler}>
       <Animated.View style={[styles.container]}>
         <Animated.View
+          style={[
+            styles.line,
+            {
+              backgroundColor: white,
+              opacity,
+              transform: [{ translateX: add(translateX, radius) }],
+            },
+          ]}
+        />
+        <Animated.View
           style={{
             width: radius * 2,
             height: radius * 2,
@@ -93,9 +125,17 @@ export default ({
             borderColor,
             borderWidth,
             backgroundColor: white,
+            opacity,
             transform: [{ translateX }, { translateY }],
           }}
         />
+        <Animated.View
+          style={[styles.container, { transform: [{ translateX }], opacity }]}>
+          <ReText
+            text={format(value)}
+            style={{ color: 'black', fontVariant: ['tabular-nums'] }}
+          />
+        </Animated.View>
       </Animated.View>
     </PanGestureHandler>
   );
