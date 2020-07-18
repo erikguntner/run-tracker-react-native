@@ -11,7 +11,15 @@ import Animated, {
   concat,
   interpolate,
   Extrapolate,
+  divide,
+  floor,
+  multiply,
   add,
+  cond,
+  lessThan,
+  lessOrEq,
+  modulo,
+  Value,
 } from 'react-native-reanimated';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import {
@@ -20,6 +28,7 @@ import {
   useValues,
   onGestureEvent,
   ReText,
+  round,
 } from 'react-native-redash';
 import { ScaleLinear } from 'd3';
 
@@ -40,16 +49,22 @@ interface CursorProps {
 const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
-    flex: 1,
   },
   line: {
     ...StyleSheet.absoluteFillObject,
     width: 2,
     height: 125,
   },
+  labelContainer: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#FEFFFF',
+    borderRadius: 4,
+    padding: 4,
+    marginTop: 4,
+  },
   label: {
-    padding: 8,
-    textAlign: 'center',
+    color: 'black',
+    fontVariant: ['tabular-nums'],
   },
 });
 
@@ -85,9 +100,38 @@ export default ({
     outputRange: [0, 6.4],
   });
 
-  const format = (value: Animated.Node<number>) => {
-    return concat('', value);
+  const formatInt = (value: Animated.Node<number>) => {
+    const t = floor(divide(value, 1000));
+    return cond(lessThan(t, 1), concat(t), concat(t, ',', modulo(value, 1000)));
   };
+
+  const format = (value: Animated.Node<number>) => {
+    const int = cond(
+      lessOrEq(value, 0.5),
+      multiply(floor(value), -1),
+      floor(value),
+    );
+    const dec = floor(multiply(sub(value, int), 100));
+    const formattedDec = cond(
+      eq(dec, 0),
+      '00',
+      cond(lessThan(dec, 10), concat('0', dec), concat(dec)),
+    );
+    return concat('', int, '.', formattedDec);
+  };
+
+  useCode(
+    () =>
+      onChange(
+        [value],
+        call([value], ([xValue]) => {
+          // const int = floor(xValue);
+          // const dec = floor(multiply(sub(xValue, int), 100));
+          console.log(xValue);
+        }),
+      ),
+    [value],
+  );
 
   useCode(
     () =>
@@ -130,11 +174,11 @@ export default ({
           }}
         />
         <Animated.View
-          style={[styles.container, { transform: [{ translateX }], opacity }]}>
-          <ReText
-            text={format(value)}
-            style={{ color: 'black', fontVariant: ['tabular-nums'] }}
-          />
+          style={[
+            styles.labelContainer,
+            { transform: [{ translateX }], opacity },
+          ]}>
+          <ReText text={format(value)} style={styles.label} />
         </Animated.View>
       </Animated.View>
     </PanGestureHandler>

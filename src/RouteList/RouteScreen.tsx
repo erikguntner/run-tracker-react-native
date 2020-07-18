@@ -9,12 +9,10 @@ import Animated, {
   cond,
   eq,
   set,
-  not,
   onChange,
   call,
 } from 'react-native-reanimated';
 import {
-  usePanGestureHandler,
   panGestureHandler,
   withSpring,
   clamp,
@@ -70,13 +68,6 @@ const styles = StyleSheet.create({
   },
   scrollview: {
     flex: 1,
-  },
-  content: {
-    height: HEIGHT - HEADER_HEIGHT - 80,
-    borderTopLeftRadius: BORDER_RADIUS,
-    borderTopRightRadius: BORDER_RADIUS,
-    backgroundColor: '#2d3748',
-    padding: 20,
   },
 });
 
@@ -177,17 +168,23 @@ const RouteScreen = ({
           )}
         </MapView>
       </Animated.View>
-      <PanGestureHandler {...gestureHandler}>
-        <Animated.View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-          }}>
-          <RouteContent
-            route={data}
-            {...{ setPointAlongPath, translateY, canScroll, isUp }}
-          />
-        </Animated.View>
-      </PanGestureHandler>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          transform: [{ translateY }],
+        }}>
+        <PanGestureHandler {...gestureHandler}>
+          <Animated.View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+            }}>
+            <RouteContent
+              route={data}
+              {...{ setPointAlongPath, canScroll, isUp }}
+            />
+          </Animated.View>
+        </PanGestureHandler>
+      </Animated.View>
       <View style={styles.header}>
         <View style={styles.bar}>
           <BorderlessButton onPress={() => navigation.goBack()}>
