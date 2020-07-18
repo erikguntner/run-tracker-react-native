@@ -42,12 +42,16 @@ const RouteContent = ({
 
   const { name, distance, lines, created_at, city, state } = route;
 
-  const convertedLength = convertLength(parseInt(distance), 'meters', units);
+  const convertedLength = convertLength(parseFloat(distance), 'meters', units);
 
   return (
     <View style={styles.content}>
       <ScrollView scrollEnabled={canScroll}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
+        <Text style={styles.title}>
+          {convertedLength.toFixed(2)}
+          {units}
+        </Text>
         <ElevationChart {...{ lines, units, setPointAlongPath }} />
       </ScrollView>
     </View>

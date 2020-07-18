@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions, StyleSheet } from 'react-native';
+import { View, Dimensions, StyleSheet } from 'react-native';
 import { parseElevationData } from '../utils/parseElevationData';
 import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { scaleLinear, max, extent, curveMonotoneX, line } from 'd3';
@@ -51,9 +51,9 @@ const ElevationChart = ({
       yAxisUnits,
     );
 
-  const xScale = scaleLinear()
-    .domain([0, max(elevationData, xValue)])
-    .range([0, graphWidth]);
+  const xMax = max(elevationData, xValue);
+
+  const xScale = scaleLinear().domain([0, xMax]).range([0, graphWidth]);
 
   const yScale = scaleLinear()
     .domain(extent(elevationData, yValue))
@@ -86,7 +86,7 @@ const ElevationChart = ({
           borderWidth={STROKE_WIDTH}
           borderColor="#3977e3"
           width={graphWidth}
-          {...{ d, xScale, lines, units, setPointAlongPath }}
+          {...{ d, xScale, xMax, lines, units, setPointAlongPath }}
         />
       </View>
     </View>

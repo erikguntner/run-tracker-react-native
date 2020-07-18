@@ -150,6 +150,8 @@ const RouteScreen = ({
           style={styles.map}
           scrollEnabled={false}
           pitchEnabled={false}
+          zoomEnabled={false}
+          zoomTapEnabled={false}
           rotateEnabled={false}>
           <Polyline
             {...{ coordinates }}
@@ -162,8 +164,9 @@ const RouteScreen = ({
                 latitude: pointAlongPath[1],
                 longitude: pointAlongPath[0],
               }}
-              radius={8}
-              fillColor="blue"
+              radius={30}
+              strokeColor="#0070f3"
+              fillColor="white"
             />
           )}
         </MapView>

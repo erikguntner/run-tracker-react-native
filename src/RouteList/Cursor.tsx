@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
+import { useMemoOne } from 'use-memo-one';
 import { multiLineString, lineString } from '@turf/helpers';
 import along from '@turf/along';
 import Animated, {
@@ -11,24 +12,21 @@ import Animated, {
   concat,
   interpolate,
   Extrapolate,
-  divide,
   floor,
   multiply,
   add,
   cond,
   lessThan,
   lessOrEq,
-  modulo,
-  Value,
 } from 'react-native-reanimated';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import {
   parsePath,
   getPointAtLength,
-  useValues,
   onGestureEvent,
+  useValues,
+  useGestureHandler,
   ReText,
-  round,
 } from 'react-native-redash';
 import { ScaleLinear } from 'd3';
 
@@ -40,6 +38,7 @@ interface CursorProps {
   borderWidth: number;
   borderColor: string;
   width: number;
+  xMax: number;
   xScale: ScaleLinear<number, number>;
   lines: number[][][];
   units: 'kilometers' | 'miles';
@@ -74,15 +73,16 @@ export default ({
   borderWidth,
   borderColor,
   width,
+  xMax,
   xScale,
   lines,
   units,
   setPointAlongPath,
 }: CursorProps) => {
   const radius = r + borderWidth / 2;
+
   const [x1, y1, state] = useValues(0, 0, State.UNDETERMINED);
   const gestureHandler = onGestureEvent({ x: x1, y: y1, state });
-  // const cx = clamp(decay(translationX, state, velocityX), 0, width);
   const path = parsePath(d);
   const length = interpolate(x1, {
     inputRange: [0, width],
@@ -95,15 +95,10 @@ export default ({
   const translateX: any = x;
   const translateY: any = sub(y, radius);
 
-  const value = interpolate(translateX, {
+  const distance = interpolate(translateX, {
     inputRange: [0, width],
-    outputRange: [0, 6.4],
+    outputRange: [0, xMax],
   });
-
-  const formatInt = (value: Animated.Node<number>) => {
-    const t = floor(divide(value, 1000));
-    return cond(lessThan(t, 1), concat(t), concat(t, ',', modulo(value, 1000)));
-  };
 
   const format = (value: Animated.Node<number>) => {
     const int = cond(
@@ -123,29 +118,21 @@ export default ({
   useCode(
     () =>
       onChange(
-        [value],
-        call([value], ([xValue]) => {
-          // const int = floor(xValue);
-          // const dec = floor(multiply(sub(xValue, int), 100));
-          console.log(xValue);
+        [x, state],
+        call([x, state], ([pathX, state]) => {
+          // console.log(state);
+          // if (state === 5) {
+          //   setPointAlongPath([]);
+          // } else {
+          //   //@ts-ignore
+          //   const line = lineString(lines.flat());
+          //   const distanceAlongPath = xScale.invert(pathX);
+          //   const segment = along(line, distanceAlongPath, { units });
+          //   setPointAlongPath(segment.geometry.coordinates);
+          // }
         }),
       ),
-    [value],
-  );
-
-  useCode(
-    () =>
-      onChange(
-        [x],
-        call([x], ([pathX]) => {
-          //@ts-ignore
-          // const line = lineString(lines.flat());
-          // const distanceAlongPath = xScale.invert(pathX);
-          // const segment = along(line, distanceAlongPath, { units });
-          // setPointAlongPath(segment.geometry.coordinates);
-        }),
-      ),
-    [x1],
+    [x, state],
   );
 
   return (
@@ -178,7 +165,7 @@ export default ({
             styles.labelContainer,
             { transform: [{ translateX }], opacity },
           ]}>
-          <ReText text={format(value)} style={styles.label} />
+          <ReText text={format(distance)} style={styles.label} />
         </Animated.View>
       </Animated.View>
     </PanGestureHandler>
