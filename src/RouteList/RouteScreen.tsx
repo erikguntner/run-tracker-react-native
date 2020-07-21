@@ -52,6 +52,9 @@ const styles = StyleSheet.create({
   mapContainer: {
     height: MAP_HEIGHT,
   },
+  backButton: {
+    paddingTop: 8,
+  },
   map: {
     flex: 1,
     width,
@@ -61,13 +64,25 @@ const styles = StyleSheet.create({
     height: HEADER_HEIGHT,
     paddingTop: 44,
   },
-  bar: {
-    height: 40,
-    justifyContent: 'center',
-    paddingLeft: 20,
-  },
   scrollview: {
     flex: 1,
+  },
+  sheetHeader: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    flex: 1,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bar: {
+    width: 75,
+    height: 6,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    opacity: 0.4,
   },
 });
 
@@ -185,11 +200,14 @@ const RouteScreen = ({
               route={data}
               {...{ setPointAlongPath, canScroll, isUp }}
             />
+            <View style={styles.sheetHeader}>
+              <View style={styles.bar} />
+            </View>
           </Animated.View>
         </PanGestureHandler>
       </Animated.View>
       <View style={styles.header}>
-        <View style={styles.bar}>
+        <View style={styles.backButton}>
           <BorderlessButton onPress={() => navigation.goBack()}>
             <Text>Back</Text>
           </BorderlessButton>

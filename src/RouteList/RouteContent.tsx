@@ -21,11 +21,12 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: BORDER_RADIUS,
     borderTopRightRadius: BORDER_RADIUS,
     backgroundColor: '#2d3748',
+    paddingTop: 55,
     padding: 20,
   },
   title: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 20,
   },
