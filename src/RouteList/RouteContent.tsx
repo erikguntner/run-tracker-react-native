@@ -49,11 +49,11 @@ const RouteContent = ({
     <View style={styles.content}>
       <ScrollView scrollEnabled={canScroll}>
         <Text style={styles.title}>{name.toUpperCase()}</Text>
+        <ElevationChart {...{ lines, units, setPointAlongPath }} />
         <Text style={styles.title}>
           {convertedLength.toFixed(2)}
           {units}
         </Text>
-        <ElevationChart {...{ lines, units, setPointAlongPath }} />
       </ScrollView>
     </View>
   );
