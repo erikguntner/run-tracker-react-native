@@ -38,6 +38,7 @@ interface CursorProps {
   borderWidth: number;
   borderColor: string;
   width: number;
+  height: number;
   xMax: number;
   xScale: ScaleLinear<number, number>;
   lines: number[][][];
@@ -52,7 +53,6 @@ const styles = StyleSheet.create({
   line: {
     ...StyleSheet.absoluteFillObject,
     width: 2,
-    height: 125,
   },
   labelContainer: {
     alignSelf: 'flex-start',
@@ -73,6 +73,7 @@ export default ({
   borderWidth,
   borderColor,
   width,
+  height,
   xMax,
   xScale,
   lines,
@@ -144,6 +145,7 @@ export default ({
             {
               backgroundColor: white,
               opacity,
+              height,
               transform: [{ translateX: add(translateX, radius) }],
             },
           ]}

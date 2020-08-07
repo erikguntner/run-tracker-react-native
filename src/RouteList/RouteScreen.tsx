@@ -28,6 +28,7 @@ import RouteContent from './RouteContent';
 import { RootState } from '../redux/rootReducer';
 import { RouteListStackNavProps } from './RouteListParamList';
 import { useFitToCoordinates } from './useFitToCoordinates';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -52,8 +53,9 @@ const styles = StyleSheet.create({
   mapContainer: {
     height: MAP_HEIGHT,
   },
-  backButton: {
-    paddingTop: 8,
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   map: {
     flex: 1,
@@ -207,9 +209,16 @@ const RouteScreen = ({
         </PanGestureHandler>
       </Animated.View>
       <View style={styles.header}>
-        <View style={styles.backButton}>
-          <BorderlessButton onPress={() => navigation.goBack()}>
-            <Text>Back</Text>
+        <View style={styles.buttons}>
+          <BorderlessButton
+            style={{ paddingLeft: 20 }}
+            onPress={() => navigation.goBack()}>
+            <Ionicons name="ios-chevron-back" size={32} color="#0070f3" />
+          </BorderlessButton>
+          <BorderlessButton
+            style={{ paddingRight: 20 }}
+            onPress={() => navigation.goBack()}>
+            <Ionicons name="ios-share-outline" size={32} color="#0070f3" />
           </BorderlessButton>
         </View>
       </View>

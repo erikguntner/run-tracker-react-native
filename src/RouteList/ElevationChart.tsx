@@ -32,7 +32,7 @@ const ElevationChart = ({
   setPointAlongPath,
 }: ElevationChartProps) => {
   const { width } = Dimensions.get('window');
-  const height = 125;
+  const height = 100;
   const graphPadding = 40;
   const graphWidth = width - graphPadding - 20;
   const strokeWidth = 4;
@@ -70,9 +70,15 @@ const ElevationChart = ({
         <Svg style={{ marginLeft: 20 }}>
           <Defs>
             <LinearGradient id="gradient" x1="50%" y1="0%" x2="50%" y2="100%">
-              <Stop offset="0%" stopColor="#cee3f9" />
-              <Stop offset="80%" stopColor="#ddedfa" />
-              <Stop offset="100%" stopColor="#feffff" />
+              <Stop offset="0%" stopColor="#cee3f9" stopOpacity="1" />
+              <Stop offset="25%" stopColor="#cee3f9" stopOpacity="0.8" />
+              <Stop offset="50%" stopColor="#cee3f9" stopOpacity="0.6" />
+              <Stop offset="75%" stopColor="#ddedfa" stopOpacity="0.5" />
+              <Stop offset="80%" stopColor="#ddedfa" stopOpacity="0.4" />
+              <Stop offset="85%" stopColor="#ddedfa" stopOpacity="0.3" />
+              <Stop offset="90%" stopColor="#feffff" stopOpacity="0.2" />
+              <Stop offset="95%" stopColor="#feffff" stopOpacity="0" />
+              <Stop offset="100%" stopColor="#feffff" stopOpacity="0" />
             </LinearGradient>
           </Defs>
           <Path
@@ -86,7 +92,7 @@ const ElevationChart = ({
           borderWidth={STROKE_WIDTH}
           borderColor="#3977e3"
           width={graphWidth}
-          {...{ d, xScale, xMax, lines, units, setPointAlongPath }}
+          {...{ d, xScale, xMax, lines, units, setPointAlongPath, height }}
         />
       </View>
     </View>
