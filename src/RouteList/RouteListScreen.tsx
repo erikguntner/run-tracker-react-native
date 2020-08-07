@@ -15,6 +15,7 @@ import {
   useGestureHandler,
   useDebug,
 } from 'react-native-redash';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // import { Button } from '../components';
 import { useSelector } from 'react-redux';
@@ -51,14 +52,17 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'gray',
   },
   list: {
+    backgroundColor: '#fffe',
     paddingTop: 50,
     width,
   },
   route: {
+    backgroundColor: '#fff',
     padding: 20,
+    marginBottom: 1,
   },
   icon: {
     ...StyleSheet.absoluteFillObject,
@@ -130,13 +134,15 @@ const RouteListScreen = ({
         style={[styles.listContainer, { transform: [{ translateY }] }]}>
         <FlatList
           style={styles.list}
-          renderItem={({ item: { name, id } }) => {
+          renderItem={({ item: { name, id }, index }) => {
+            const borderBottomWidth = index === routes.length - 1 ? 0 : 2;
+
             return (
               <RectButton
                 onPress={() => {
                   navigation.navigate('Route', { id });
                 }}
-                style={styles.route}>
+                style={[styles.route, { borderBottomWidth }]}>
                 <Text>{name}</Text>
               </RectButton>
             );
@@ -148,10 +154,10 @@ const RouteListScreen = ({
       <TapGestureHandler {...gestureHandler}>
         <Animated.View style={styles.tap}>
           <Animated.View style={[styles.icon, { opacity: listOpacity }]}>
-            <Text>List</Text>
+            <Ionicons name="ios-list" size={24} />
           </Animated.View>
           <Animated.View style={{ opacity: mapOpacity }}>
-            <Text>Map</Text>
+            <Ionicons name="ios-map" size={24} />
           </Animated.View>
         </Animated.View>
       </TapGestureHandler>

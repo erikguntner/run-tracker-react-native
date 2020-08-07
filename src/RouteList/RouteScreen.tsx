@@ -9,12 +9,10 @@ import Animated, {
   cond,
   eq,
   set,
-  not,
   onChange,
   call,
 } from 'react-native-reanimated';
 import {
-  usePanGestureHandler,
   panGestureHandler,
   withSpring,
   clamp,
@@ -30,6 +28,7 @@ import RouteContent from './RouteContent';
 import { RootState } from '../redux/rootReducer';
 import { RouteListStackNavProps } from './RouteListParamList';
 import { useFitToCoordinates } from './useFitToCoordinates';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -54,6 +53,10 @@ const styles = StyleSheet.create({
   mapContainer: {
     height: MAP_HEIGHT,
   },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   map: {
     flex: 1,
     width,
@@ -63,20 +66,25 @@ const styles = StyleSheet.create({
     height: HEADER_HEIGHT,
     paddingTop: 44,
   },
-  bar: {
-    height: 40,
-    justifyContent: 'center',
-    paddingLeft: 20,
-  },
   scrollview: {
     flex: 1,
   },
-  content: {
-    height: HEIGHT - HEADER_HEIGHT - 80,
-    borderTopLeftRadius: BORDER_RADIUS,
-    borderTopRightRadius: BORDER_RADIUS,
-    backgroundColor: '#2d3748',
-    padding: 20,
+  sheetHeader: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    flex: 1,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bar: {
+    width: 75,
+    height: 6,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    opacity: 0.4,
   },
 });
 
@@ -159,6 +167,8 @@ const RouteScreen = ({
           style={styles.map}
           scrollEnabled={false}
           pitchEnabled={false}
+          zoomEnabled={false}
+          zoomTapEnabled={false}
           rotateEnabled={false}>
           <Polyline
             {...{ coordinates }}
@@ -171,27 +181,44 @@ const RouteScreen = ({
                 latitude: pointAlongPath[1],
                 longitude: pointAlongPath[0],
               }}
-              radius={8}
-              fillColor="blue"
+              radius={30}
+              strokeColor="#0070f3"
+              fillColor="white"
             />
           )}
         </MapView>
       </Animated.View>
-      <PanGestureHandler {...gestureHandler}>
-        <Animated.View
-          style={{
-            ...StyleSheet.absoluteFillObject,
-          }}>
-          <RouteContent
-            route={data}
-            {...{ setPointAlongPath, translateY, canScroll, isUp }}
-          />
-        </Animated.View>
-      </PanGestureHandler>
+      <Animated.View
+        style={{
+          ...StyleSheet.absoluteFillObject,
+          transform: [{ translateY }],
+        }}>
+        <PanGestureHandler {...gestureHandler}>
+          <Animated.View
+            style={{
+              ...StyleSheet.absoluteFillObject,
+            }}>
+            <RouteContent
+              route={data}
+              {...{ setPointAlongPath, canScroll, isUp }}
+            />
+            <View style={styles.sheetHeader}>
+              <View style={styles.bar} />
+            </View>
+          </Animated.View>
+        </PanGestureHandler>
+      </Animated.View>
       <View style={styles.header}>
-        <View style={styles.bar}>
-          <BorderlessButton onPress={() => navigation.goBack()}>
-            <Text>Back</Text>
+        <View style={styles.buttons}>
+          <BorderlessButton
+            style={{ paddingLeft: 20 }}
+            onPress={() => navigation.goBack()}>
+            <Ionicons name="ios-chevron-back" size={32} color="#0070f3" />
+          </BorderlessButton>
+          <BorderlessButton
+            style={{ paddingRight: 20 }}
+            onPress={() => navigation.goBack()}>
+            <Ionicons name="ios-share-outline" size={32} color="#0070f3" />
           </BorderlessButton>
         </View>
       </View>
