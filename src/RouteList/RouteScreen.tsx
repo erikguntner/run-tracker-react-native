@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import MapView, { Polyline, Circle } from 'react-native-maps';
 import Animated, {
@@ -44,49 +44,6 @@ const config = {
   restSpeedThreshold: 0.1,
   restDisplacementThreshold: 0.1,
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    height,
-  },
-  mapContainer: {
-    height: MAP_HEIGHT,
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  map: {
-    flex: 1,
-    width,
-  },
-  header: {
-    ...StyleSheet.absoluteFillObject,
-    height: HEADER_HEIGHT,
-    paddingTop: 44,
-  },
-  scrollview: {
-    flex: 1,
-  },
-  sheetHeader: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    left: 0,
-    flex: 1,
-    height: 55,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bar: {
-    width: 75,
-    height: 6,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    opacity: 0.4,
-  },
-});
 
 const RouteScreen = ({
   route,
@@ -225,5 +182,48 @@ const RouteScreen = ({
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    height,
+  },
+  mapContainer: {
+    height: MAP_HEIGHT,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  map: {
+    flex: 1,
+    width,
+  },
+  header: {
+    ...StyleSheet.absoluteFillObject,
+    height: HEADER_HEIGHT,
+    paddingTop: 44,
+  },
+  scrollview: {
+    flex: 1,
+  },
+  sheetHeader: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    left: 0,
+    flex: 1,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bar: {
+    width: 75,
+    height: 6,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    opacity: 0.4,
+  },
+});
 
 export default RouteScreen;
